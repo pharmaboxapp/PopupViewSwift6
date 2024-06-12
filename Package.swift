@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "MijickPopupView",
+    name: "Swift6PopupView",
     platforms: [
         .iOS(.v16),
         .macOS(.v13),
         .tvOS(.v16)
     ],
     products: [
-        .library(name: "MijickPopupView", targets: ["MijickPopupView"])
+        .library(name: "Swift6PopupView", targets: ["Swift6PopupView"])
     ],
     targets: [
-        .target(name: "MijickPopupView", dependencies: [], path: "Sources")
+        .target(name: "Swift6PopupView", dependencies: [], path: "Sources")
     ],
     swiftLanguageVersions: [.version("6")]
 )
