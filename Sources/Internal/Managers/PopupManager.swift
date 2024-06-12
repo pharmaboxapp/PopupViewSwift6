@@ -10,6 +10,8 @@
 
 import SwiftUI
 
+
+@MainActor
 public class PopupManager: ObservableObject {
     @Published private(set) var views: [any Popup] = []
     private(set) var presenting: Bool = true
@@ -26,12 +28,16 @@ enum StackOperation {
     case removeLast, remove(id: String), removeAllUpTo(id: String), removeAll
 }
 extension PopupManager {
+    @MainActor
     static func performOperation(_ operation: StackOperation) { DispatchQueue.main.async {
         removePopupFromStackToBeDismissed(operation)
         updateOperationType(operation)
         shared.views.perform(operation)
     }}
+    @MainActor
     static func dismissPopupAfter(_ popup: any Popup, _ seconds: Double) { shared.popupsToBeDismissed[popup.id] = DispatchSource.createAction(deadline: seconds) { performOperation(.remove(id: popup.id)) } }
+    
+    @MainActor
     static func hideOverlay(_ popup: any Popup) { shared.popupsWithoutOverlay.append(popup.id) }
 }
 private extension PopupManager {

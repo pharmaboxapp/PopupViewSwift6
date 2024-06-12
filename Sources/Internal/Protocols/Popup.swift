@@ -19,6 +19,8 @@ public protocol Popup: View {
     func createContent() -> V
     func configurePopup(popup: Config) -> Config
 }
+
+@MainActor
 public extension Popup {
     var id: String { .init(describing: Self.self) }
     var body: V { createContent() }
@@ -27,6 +29,7 @@ public extension Popup {
 }
 
 // MARK: - Helpers
+@MainActor
 extension Popup {
     func remove() { PopupManager.performOperation(.remove(id: id)) }
 }
