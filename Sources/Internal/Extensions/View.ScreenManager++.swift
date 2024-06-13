@@ -12,18 +12,32 @@
 import SwiftUI
 
 extension View {
-    func updateScreenSize() -> some View { GeometryReader { reader in
-        frame(maxWidth: .infinity, maxHeight: .infinity)
-            .onAppear { ScreenManager.update(reader) }
-            .onChange(of: reader.size) { _ in ScreenManager.update(reader) }
-            .onChange(of: reader.safeAreaInsets) { _ in ScreenManager.update(reader) }
-    }}
+    func updateScreenSize() -> some View { 
+        GeometryReader { reader in
+            frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    Task{ @MainActor in
+                        ScreenManager.update(reader)
+                    }
+                }
+                .onChange(of: reader.size) { _ in
+                    Task{ @MainActor in
+                        ScreenManager.update(reader)
+                    }
+                }
+                .onChange(of: reader.safeAreaInsets) { _ in
+                    Task{ @MainActor in
+                        ScreenManager.update(reader)
+                    }
+                }
+        }
+    }
 }
 fileprivate extension ScreenManager {
     static func update(_ reader: GeometryProxy) {
         shared.size.height = reader.size.height + reader.safeAreaInsets.top + reader.safeAreaInsets.bottom
         shared.size.width = reader.size.width + reader.safeAreaInsets.leading + reader.safeAreaInsets.trailing
-
+        
         shared.safeArea.top = reader.safeAreaInsets.top
         shared.safeArea.bottom = reader.safeAreaInsets.bottom
         shared.safeArea.left = reader.safeAreaInsets.leading

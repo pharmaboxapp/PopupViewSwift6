@@ -11,7 +11,7 @@
 import SwiftUI
 
 @MainActor
-struct AnyPopup<Config: Configurable>: Popup, @preconcurrency Hashable {
+struct AnyPopup<Config: Configurable>: Popup, Hashable {
     let id: String
     private let _body: AnyView
     private let _configBuilder: (Config) -> Config
