@@ -10,14 +10,15 @@
 
 import SwiftUI
 
+@MainActor
 public protocol Popup: View {
     associatedtype Config: Configurable
     associatedtype V: View
 
-    var id: String { get }
+    @MainActor var id: String { get }
 
-    func createContent() -> V
-    func configurePopup(popup: Config) -> Config
+    @MainActor func createContent() -> V
+    @MainActor func configurePopup(popup: Config) -> Config
 }
 
 @MainActor

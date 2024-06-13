@@ -54,14 +54,16 @@ private extension PopupManager {
 }
 
 fileprivate extension [any Popup] {
-    mutating func perform(_ operation: StackOperation) {
+    
+    @MainActor mutating func perform(_ operation: StackOperation) {
         hideKeyboard()
         performOperation(operation)
     }
 }
 private extension [any Popup] {
-    func hideKeyboard() { KeyboardManager.hideKeyboard() }
-    mutating func performOperation(_ operation: StackOperation) {
+    @MainActor func hideKeyboard() { KeyboardManager.hideKeyboard() }
+    
+    @MainActor mutating func performOperation(_ operation: StackOperation) {
         switch operation {
             case .insertAndReplace(let popup): replaceLast(popup, if: canBeInserted(popup))
             case .insertAndStack(let popup): append(popup, if: canBeInserted(popup))
@@ -73,5 +75,6 @@ private extension [any Popup] {
     }
 }
 private extension [any Popup] {
-    func canBeInserted(_ popup: some Popup) -> Bool { !contains(where: { $0.id == popup.id }) }
+    
+    @MainActor func canBeInserted(_ popup: some Popup) -> Bool { !contains(where: { $0.id == popup.id }) }
 }

@@ -17,6 +17,7 @@ public extension GlobalConfig {
 
 
 // MARK: - Internal
+@MainActor
 public struct GlobalConfig: Configurable { public init() {}
     var common: Common = .init()
     var top: Top = .init()

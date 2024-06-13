@@ -13,19 +13,20 @@ import Combine
 
 // MARK: -iOS Implementation
 #if os(iOS)
+@MainActor
 class KeyboardManager: ObservableObject {
     @Published private(set) var height: CGFloat = 0
-    private var subscription: [AnyCancellable] = []
+    @MainActor private var subscription: [AnyCancellable] = []
 
     static let shared: KeyboardManager = .init()
     private init() { subscribeToKeyboardEvents() }
 }
 extension KeyboardManager {
-    static func hideKeyboard() { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }
+    @MainActor static func hideKeyboard() { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }
 }
 
 private extension KeyboardManager {
-    func subscribeToKeyboardEvents() {
+    @MainActor func subscribeToKeyboardEvents() {
         Publishers.Merge(getKeyboardWillOpenPublisher(), createKeyboardWillHidePublisher())
             .sink { self.height = $0 }
             .store(in: &subscription)

@@ -10,6 +10,7 @@
 
 import SwiftUI
 
+@MainActor 
 struct PopupBottomStackView: PopupStack {
     let items: [AnyPopup<BottomPopupConfig>]
     let globalConfig: GlobalConfig
@@ -46,7 +47,7 @@ private extension PopupBottomStackView {
             .fixedSize(horizontal: false, vertical: getFixedSize(item))
             .readHeight { saveHeight($0, for: item) }
             .frame(height: getHeight(item), alignment: .top).frame(maxWidth: .infinity, maxHeight: height)
-            .background(getBackgroundColour(for: item), overlayColour: getStackOverlayColour(item), radius: getCornerRadius(item), corners: getCorners(), shadow: popupShadow)
+            .background(getBackgroundColour(for: item), overlayColour: getStackOverlayColour(item), shadow: popupShadow)
             .padding(.horizontal, popupHorizontalPadding)
             .offset(y: getOffset(item))
             .scaleEffect(x: getScale(item))
@@ -81,12 +82,6 @@ private extension PopupBottomStackView {
 
 // MARK: - View Modifiers
 private extension PopupBottomStackView {
-    func getCorners() -> RectCorner {
-        switch popupBottomPadding {
-            case 0: return [.topLeft, .topRight]
-            default: return .allCorners
-        }
-    }
     func saveHeight(_ height: CGFloat, for item: AnyPopup<BottomPopupConfig>) { if !isGestureActive {
         let config = item.configurePopup(popup: .init())
 
@@ -115,23 +110,23 @@ private extension PopupBottomStackView {
 // MARK: - Flags & Values
 extension PopupBottomStackView {
     var popupBottomPadding: CGFloat { lastPopupConfig.popupPadding.bottom }
-    var popupHorizontalPadding: CGFloat { lastPopupConfig.popupPadding.horizontal }
+    @MainActor var popupHorizontalPadding: CGFloat { lastPopupConfig.popupPadding.horizontal }
     var popupShadow: Shadow { globalConfig.bottom.shadow }
-    var height: CGFloat { heights.first { $0.key == items.last?.id }?.value ?? (lastPopupConfig.contentFillsEntireScreen ? screenManager.size.height : getInitialHeight()) }
+    @MainActor var height: CGFloat { heights.first { $0.key == items.last?.id }?.value ?? (lastPopupConfig.contentFillsEntireScreen ? screenManager.size.height : getInitialHeight()) }
     var maxHeight: CGFloat { getMaxHeight() - popupBottomPadding }
-    var distanceFromKeyboard: CGFloat { lastPopupConfig.distanceFromKeyboard ?? globalConfig.bottom.distanceFromKeyboard }
+    @MainActor var distanceFromKeyboard: CGFloat { lastPopupConfig.distanceFromKeyboard ?? globalConfig.bottom.distanceFromKeyboard }
     var cornerRadius: CGFloat { let cornerRadius = lastPopupConfig.cornerRadius ?? globalConfig.bottom.cornerRadius; return lastPopupConfig.contentFillsEntireScreen ? min(cornerRadius, screenManager.cornerRadius ?? 0) : cornerRadius }
-    var maxHeightStackedFactor: CGFloat { 0.85 }
+    @MainActor var maxHeightStackedFactor: CGFloat { 0.85 }
     var isKeyboardVisible: Bool { keyboardManager.height > 0 }
 
-    var stackLimit: Int { globalConfig.bottom.stackLimit }
+    @MainActor var stackLimit: Int { globalConfig.bottom.stackLimit }
     var stackScaleFactor: CGFloat { globalConfig.bottom.stackScaleFactor }
-    var stackOffsetValue: CGFloat { -globalConfig.bottom.stackOffset }
+    @MainActor var stackOffsetValue: CGFloat { -globalConfig.bottom.stackOffset }
     var stackCornerRadiusMultiplier: CGFloat { globalConfig.bottom.stackCornerRadiusMultiplier }
 
-    var translationProgress: CGFloat { abs(gestureTranslation) / height }
+    @MainActor var translationProgress: CGFloat { abs(gestureTranslation) / height }
     var gestureClosingThresholdFactor: CGFloat { globalConfig.bottom.dragGestureProgressToClose }
-    var transition: AnyTransition { .move(edge: .bottom) }
+    @MainActor var transition: AnyTransition { .move(edge: .bottom) }
 
     var tapOutsideClosesPopup: Bool { lastPopupConfig.tapOutsideClosesView ?? globalConfig.bottom.tapOutsideClosesView }
 }

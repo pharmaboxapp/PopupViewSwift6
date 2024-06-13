@@ -10,6 +10,8 @@
 
 import SwiftUI
 
+
+@MainActor 
 protocol PopupStack: View {
     associatedtype Config: Configurable
 

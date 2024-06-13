@@ -13,22 +13,24 @@ import Combine
 
 // MARK: -iOS Implementation
 #if os(iOS)
+@MainActor
 class ScreenManager: ObservableObject {
     @Published var size: CGSize = .init()
     @Published var safeArea: UIEdgeInsets = .init()
-    private(set) var cornerRadius: CGFloat? = UIScreen.cornerRadius
-    private(set) var animationsDisabled: Bool = false
+    @MainActor private(set) var cornerRadius: CGFloat? = UIScreen.cornerRadius
+    @MainActor private(set) var animationsDisabled: Bool = false
 
-    static let shared: ScreenManager = .init()
+    @MainActor static let shared: ScreenManager = .init()
     private init() {}
 }
 private extension UIScreen {
-    static var cornerRadius: CGFloat? = main.value(forKey: ["Radius", "Corner", "display", "_"].reversed().joined()) as? CGFloat
+    @MainActor static var cornerRadius: CGFloat? = main.value(forKey: ["Radius", "Corner", "display", "_"].reversed().joined()) as? CGFloat
 }
 
 
 // MARK: - macOS Implementation
 #elseif os(macOS)
+@MainActor
 class ScreenManager: ObservableObject {
     @Published var size: CGSize = .init()
     @Published var safeArea: NSEdgeInsets = .init()
@@ -60,6 +62,7 @@ private extension ScreenManager {
 
 // MARK: - tvOS Implementation
 #elseif os(tvOS)
+@MainActor
 class ScreenManager: ObservableObject {
     @Published private(set) var size: CGSize = .init()
     @Published private(set) var safeArea: UIEdgeInsets = .init()

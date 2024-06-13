@@ -10,7 +10,8 @@
 
 import SwiftUI
 
-struct AnyPopup<Config: Configurable>: Popup, Hashable {
+@MainActor
+struct AnyPopup<Config: Configurable>: Popup, @preconcurrency Hashable {
     let id: String
     private let _body: AnyView
     private let _configBuilder: (Config) -> Config
@@ -28,12 +29,12 @@ struct AnyPopup<Config: Configurable>: Popup, Hashable {
     }
 }
 extension AnyPopup {
-    func createContent() -> some View { _body }
-    func configurePopup(popup: Config) -> Config { _configBuilder(popup) }
+    @MainActor func createContent() -> some View { _body }
+    @MainActor func configurePopup(popup: Config) -> Config { _configBuilder(popup) }
 }
 
 // MARK: - Hashable
 extension AnyPopup {
-    static func == (lhs: AnyPopup<Config>, rhs: AnyPopup<Config>) -> Bool { lhs.id == rhs.id }
+    nonisolated static func == (lhs: AnyPopup<Config>, rhs: AnyPopup<Config>) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }

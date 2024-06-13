@@ -42,7 +42,7 @@ private extension PopupTopStackView {
             .padding(.trailing, screenManager.safeArea.right)
             .readHeight { saveHeight($0, for: item) }
             .frame(height: height).frame(maxWidth: .infinity)
-            .background(getBackgroundColour(for: item), overlayColour: getStackOverlayColour(item), radius: getCornerRadius(item), corners: getCorners(), shadow: popupShadow)
+            .background(getBackgroundColour(for: item), overlayColour: getStackOverlayColour(item), shadow: popupShadow)
             .padding(.horizontal, lastPopupConfig.popupPadding.horizontal)
             .offset(y: getOffset(item))
             .scaleEffect(x: getScale(item))
@@ -77,12 +77,6 @@ private extension PopupTopStackView {
 
 // MARK: - View Modifiers
 private extension PopupTopStackView {
-    func getCorners() -> RectCorner {
-        switch popupTopPadding {
-            case 0: return [.bottomLeft, .bottomRight]
-            default: return .allCorners
-        }
-    }
     func getBackgroundColour(for item: AnyPopup<TopPopupConfig>) -> Color { getConfig(item).backgroundColour ?? globalConfig.top.backgroundColour }
     func saveHeight(_ height: CGFloat, for item: AnyPopup<TopPopupConfig>) { if !isGestureActive { heights[item.id] = height }}
 }
